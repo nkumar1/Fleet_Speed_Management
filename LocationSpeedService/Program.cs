@@ -1,7 +1,11 @@
+using CommonLibrary.Config;
 using LocationSpeedService;
 
 var builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddHostedService<Worker>();
+
+var settings = builder.Configuration.Get<AppSettings>();
+builder.Services.AddSingleton(settings);
+builder.Services.AddHostedService<KafkaConsumerService>();
 
 var host = builder.Build();
 host.Run();
