@@ -1,0 +1,9 @@
+Fleet Speed Management
+========================
+# List all the topics
+==========================
+docker exec kafka_local kafka-topics --list --bootstrap-server localhost:9092
+
+# Manually inspect whether the topic has the message
+=====================================================
+docker exec -it kafka_local kafka-console-consumer --bootstrap-server localhost:9092 --topic truck-topic --from-beginning
