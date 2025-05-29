@@ -1,6 +1,7 @@
 ﻿using CommonLibrary.Config;
 using CommonLibrary.Models;
 using Confluent.Kafka;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,10 @@ namespace LocationSpeedService
     {
         private readonly ILogger<KafkaConsumerService> _logger;
         private readonly AppSettings _settings;
-        public KafkaConsumerService(ILogger<KafkaConsumerService> logger, AppSettings settings)
+        public KafkaConsumerService(ILogger<KafkaConsumerService> logger, IOptions<AppSettings> options)
         {
             _logger = logger;
-            _settings = settings;
+            _settings = options.Value;
         }
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -26,6 +27,8 @@ namespace LocationSpeedService
                 BootstrapServers = _settings.Kafka.BootstrapServers,
                 GroupId = _settings.Kafka.GroupId,
                 AutoOffsetReset = AutoOffsetReset.Earliest,
+                EnableAutoCommit = true, // Automatically commit offsets after consuming messages
+                //Do not create topic if it does not exist, Its handled by producer.
                 AllowAutoCreateTopics = _settings.Kafka.AllowAutoCreateTopics
             };
 

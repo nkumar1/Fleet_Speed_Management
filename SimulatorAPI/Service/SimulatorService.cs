@@ -1,14 +1,19 @@
-﻿using CommonLibrary.Interface;
+﻿using CommonLibrary.Config;
+using CommonLibrary.Interface;
 using CommonLibrary.Models;
+using Microsoft.Extensions.Options;
 
 namespace SimulatorAPI.Service
 {
     public class SimulatorService: BackgroundService
     {
         private readonly IKafkaProducerService _producer;
-        public SimulatorService(IKafkaProducerService producer)
+        private readonly AppSettings _settings;
+
+        public SimulatorService(IKafkaProducerService producer, IOptions<AppSettings> options)
         {
             _producer = producer;
+            _settings = options.Value;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -25,7 +30,7 @@ namespace SimulatorAPI.Service
                     Timestamp = DateTime.UtcNow
                 };
 
-                await _producer.SendMessageAsync("truck-topic", truckData);
+                await _producer.SendMessageAsync(_settings.Kafka.TopicName, truckData);
                 await Task.Delay(10000, stoppingToken);
             }
         }

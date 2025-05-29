@@ -9,5 +9,6 @@ namespace CommonLibrary.Interface
     public interface IKafkaProducerService
     {
         Task SendMessageAsync<T>(string topic, T message);
+        Task CreateTopicIfNotExistsAsync(string topicName, int numPartitions, short replicationFactor);
     }
 }
